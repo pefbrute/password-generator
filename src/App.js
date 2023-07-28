@@ -8,14 +8,21 @@ const PASSWORD_LENGTH = 25;
 function PasswordGenerator() {
     const [inputWords, setInputWords] = useState("");
     const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
 
-    const generatePassword = () => {
+    const generatePasswordAndEmail = () => {
         const wordsArray = inputWords.split(" ");
 
-        // Generate 4 digit prefix
-        let prefix = '';
+        // Generate 4 digit prefix for password
+        let prefixPassword = '';
         for(let i = 0; i < 4; i++) {
-            prefix += Math.floor(Math.random() * 10);  // Generate a random digit 0-9
+            prefixPassword += Math.floor(Math.random() * 10);  // Generate a random digit 0-9
+        }
+
+        // Generate 4 digit prefix for email
+        let prefixEmail = '';
+        for(let i = 0; i < 4; i++) {
+            prefixEmail += Math.floor(Math.random() * 10);  // Generate a random digit 0-9
         }
 
         // Generate password with interspersed special characters
@@ -29,7 +36,7 @@ function PasswordGenerator() {
             return passwordWithSpecialChars;
         });
 
-        let password = prefix + passwordArray.join('');
+        let password = prefixPassword + passwordArray.join('');
 
         // Ensure the password is exactly 16 characters long
         while(password.length < PASSWORD_LENGTH) {
@@ -50,7 +57,9 @@ function PasswordGenerator() {
         }
 
         setPassword(password);
-        handleCopyToClipboard(password);
+
+        const email = `${wordsArray.join('')}${prefixEmail}@outlook.com`;
+        setEmail(email);
     }
 
     const handleInputChange = (event) => {
@@ -64,8 +73,9 @@ function PasswordGenerator() {
     return (
         <div className="app-container">
             <input className="input-field" type="text" onChange={handleInputChange} />
-            <button className="generate-btn" onClick={generatePassword}>Generate Password</button>
-            <p className="password-display">Your password: <span className="password-text">{password}</span></p>
+            <button className="generate-btn" onClick={generatePasswordAndEmail}>Generate Password and Email</button>
+            <p className="email-display">Your email: <span className="email-text">{email}</span> <button className="copy-btn" onClick={() => handleCopyToClipboard(email)}>Copy Email</button></p>
+            <p className="password-display">Your password: <span className="password-text">{password}</span> <button className="copy-btn" onClick={() => handleCopyToClipboard(password)}>Copy Password</button></p>
         </div>
     );
 }

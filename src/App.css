@@ -17,9 +17,11 @@
     font-size: 16px;
     border-radius: 5px;
     border: none;
+    color: #282c34;
+    background-color: #fff;
 }
 
-.generate-btn {
+.generate-btn, .copy-btn {
     width: 310px;
     height: 40px;
     margin-bottom: 20px;
@@ -31,12 +33,23 @@
     cursor: pointer;
 }
 
-.password-display {
-    font-size: 20px;
-    color: #61dafb;
+.copy-btn {
+    width: auto;
+    height: 30px;
+    margin-left: 10px;
+    padding: 0 10px;
 }
 
-.password-text {
+.password-display, .email-display {
+    font-size: 20px;
+    color: #61dafb;
+    display: flex;
+    align-items: center;
+}
+
+.password-text, .email-text {
     color: #fff;
     font-weight: bold;
+    margin-left: 10px;
 }
+

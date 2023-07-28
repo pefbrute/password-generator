@@ -6,12 +6,22 @@ const SPECIAL_CHARS = "!@#$%^&*()_+[]{};':\"\\|,.<>/?";
 const PASSWORD_LENGTH = 25;
 
 function PasswordGenerator() {
-    const [inputWords, setInputWords] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
 
-    const generatePasswordAndEmail = () => {
-        const wordsArray = inputWords.split(" ");
+    const getRandomWords = async () => {
+        try {
+            const response = await fetch("https://random-word-api.herokuapp.com/word?number=2");
+            const words = await response.json();
+            return words;
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    }
+
+    const generatePasswordAndEmail = async () => {
+        const wordsArray = await getRandomWords();
 
         // Generate 4 digit prefix for password
         let prefixPassword = '';
@@ -19,10 +29,10 @@ function PasswordGenerator() {
             prefixPassword += Math.floor(Math.random() * 10);  // Generate a random digit 0-9
         }
 
-        // Generate 4 digit prefix for email
-        let prefixEmail = '';
-        for(let i = 0; i < 4; i++) {
-            prefixEmail += Math.floor(Math.random() * 10);  // Generate a random digit 0-9
+        // Generate 3 digit suffix for email
+        let suffixEmail = '';
+        for(let i = 0; i < 3; i++) {
+            suffixEmail += Math.floor(Math.random() * 10);  // Generate a random digit 0-9
         }
 
         // Generate password with interspersed special characters
@@ -58,12 +68,17 @@ function PasswordGenerator() {
 
         setPassword(password);
 
-        const email = `${wordsArray.join('')}${prefixEmail}@outlook.com`;
-        setEmail(email);
-    }
+        // Generate email with random length from 8 to 11, including 3 digits at the end
+        let baseEmail = wordsArray.join('').substr(0, 5);
+        const emailLength = Math.floor(Math.random() * (11 - 8 + 1)) + 8;  // Random length between 8 and 11
 
-    const handleInputChange = (event) => {
-        setInputWords(event.target.value);
+        while(baseEmail.length < (emailLength - 3)) {
+            const randomChar = CHARS[Math.floor(Math.random() * CHARS.length)];
+            baseEmail += randomChar;
+        }
+
+        const email = `${baseEmail}${suffixEmail}@outlook.com`;
+        setEmail(email);
     }
 
     const handleCopyToClipboard = (text) => {
@@ -72,7 +87,6 @@ function PasswordGenerator() {
 
     return (
         <div className="app-container">
-            <input className="input-field" type="text" onChange={handleInputChange} />
             <button className="generate-btn" onClick={generatePasswordAndEmail}>Generate Password and Email</button>
             <p className="email-display">Your email: <span className="email-text">{email}</span> <button className="copy-btn" onClick={() => handleCopyToClipboard(email)}>Copy Email</button></p>
             <p className="password-display">Your password: <span className="password-text">{password}</span> <button className="copy-btn" onClick={() => handleCopyToClipboard(password)}>Copy Password</button></p>
